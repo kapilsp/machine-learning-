@@ -1,1 +1,36 @@
+# FIND-S Algorithm in Google Colab
 
+import pandas as pd
+
+# Training dataset
+data = {
+    'Sky': ['Sunny', 'Sunny', 'Rainy', 'Sunny'],
+    'AirTemp': ['Warm', 'Warm', 'Cold', 'Warm'],
+    'Humidity': ['Normal', 'High', 'High', 'High'],
+    'Wind': ['Strong', 'Strong', 'Strong', 'Strong'],
+    'Water': ['Warm', 'Warm', 'Warm', 'Cool'],
+    'Forecast': ['Same', 'Same', 'Change', 'Change'],
+    'EnjoySport': ['Yes', 'Yes', 'No', 'Yes']
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+print("Training Dataset:")
+print(df)
+
+# Initialize hypothesis
+hypothesis = ['0'] * (len(df.columns) - 1)
+
+# FIND-S Algorithm
+for i in range(len(df)):
+    if df.iloc[i, -1] == "Yes":
+        if hypothesis[0] == '0':
+            hypothesis = list(df.iloc[i, :-1])
+        else:
+            for j in range(len(hypothesis)):
+                if hypothesis[j] != df.iloc[i, j]:
+                    hypothesis[j] = '?'
+
+print("\nMost Specific Hypothesis:")
+print(hypothesis)
