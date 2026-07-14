@@ -1,1 +1,71 @@
+| Sky   | AirTemp | Humidity | Wind   | Water | Forecast | EnjoySport |
+| ----- | ------- | -------- | ------ | ----- | -------- | ---------- |
+| Sunny | Warm    | Normal   | Strong | Warm  | Same     | Yes        |
+| Sunny | Warm    | High     | Strong | Warm  | Same     | Yes        |
+| Rainy | Cold    | High     | Strong | Warm  | Change   | No         |
+| Sunny | Warm    | High     | Strong | Cool  | Change   | Yes        |
+import pandas as pd
+import numpy as np
 
+# Upload CSV file in Colab
+from google.colab import files
+uploaded = files.upload()
+
+# Read dataset
+data = pd.read_csv('trainingdata.csv')
+
+print("Training Data:\n")
+print(data)
+
+concepts = np.array(data.iloc[:, :-1])
+target = np.array(data.iloc[:, -1])
+
+def candidate_elimination(concepts, target):
+
+    specific_h = concepts[0].copy()
+    general_h = [["?" for i in range(len(specific_h))]
+                 for i in range(len(specific_h))]
+
+    print("\nInitial Specific Hypothesis:")
+    print(specific_h)
+
+    print("\nInitial General Hypothesis:")
+    print(np.array(general_h))
+
+    for i, h in enumerate(concepts):
+
+        if target[i] == "Yes":
+
+            for x in range(len(specific_h)):
+                if h[x] != specific_h[x]:
+                    specific_h[x] = '?'
+                    general_h[x][x] = '?'
+
+        if target[i] == "No":
+
+            for x in range(len(specific_h)):
+                if h[x] != specific_h[x]:
+                    general_h[x][x] = specific_h[x]
+                else:
+                    general_h[x][x] = '?'
+
+        print("\nStep", i+1)
+        print("Specific Hypothesis:")
+        print(specific_h)
+        print("General Hypothesis:")
+        print(np.array(general_h))
+
+    general_h = [g for g in general_h if g != ['?'] * len(specific_h)]
+
+    return specific_h, general_h
+
+
+s_final, g_final = candidate_elimination(concepts, target)
+
+print("\n============================")
+print("Final Specific Hypothesis:")
+print(s_final)
+
+print("\nFinal General Hypothesis:")
+for g in g_final:
+    print(g)
